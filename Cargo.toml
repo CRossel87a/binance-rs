@@ -3,7 +3,7 @@ name = "binance"
 version = "0.20.2"
 license = "MIT OR Apache-2.0"
 authors = ["Flavio Oliveira <flavio@wisespace.io>"]
-edition = "2018"
+edition = "2021"
 
 description = "Rust Library for the Binance API"
 keywords = ["cryptocurrency", "trading", "binance"]
