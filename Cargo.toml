@@ -16,7 +16,7 @@ readme = "README.md"
 travis-ci = { repository = "wisespace-io/binance-rs" }
 
 [lib]
-name = "binance"
+name = "binance_api"
 path = "src/lib.rs"
 crate-type = ["cdylib"]
 
