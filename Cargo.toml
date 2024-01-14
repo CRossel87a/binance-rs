@@ -1,5 +1,5 @@
 [package]
-name = "binance"
+name = "binance_api"
 version = "0.20.2"
 license = "MIT OR Apache-2.0"
 authors = ["Flavio Oliveira <flavio@wisespace.io>"]
