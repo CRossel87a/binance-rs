@@ -39,14 +39,12 @@ impl AsyncClient {
 
     pub async fn post_signed<T: DeserializeOwned>(&self, endpoint: API, request: String) -> anyhow::Result<T> {
         let url = self.sign_request(endpoint, Some(request));
-        dbg!(&url);
         let client = &self.inner_client;
         let response = client
             .post(url.as_str())
             .headers(self.build_headers(true)?)
             .send().await?;
 
-        dbg!(&response);
         self.handler(response).await
     }
 
