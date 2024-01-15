@@ -354,6 +354,7 @@ pub extern "C" fn batch_orders_rs(
 }
 
 
+/* 
 #[no_mangle]
 // pub fn exchange_info(&self) -> Result<ExchangeInformation>
 pub extern "C" fn exchange_info_rs() -> *mut c_char {
@@ -362,6 +363,7 @@ pub extern "C" fn exchange_info_rs() -> *mut c_char {
         CString::new(res).unwrap().into_raw() as *mut c_char
     }
 }
+
 
 #[no_mangle]
 // pub fn get_custom_depth<S>(&self, symbol: S, depth: u64) -> Result<OrderBook>
@@ -395,3 +397,4 @@ pub extern "C" fn get_book_ticker_rs(symbol: *const c_char) -> *mut c_char {
         CString::new(res).unwrap().into_raw() as *mut c_char
     }
 }
+*/

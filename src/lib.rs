@@ -16,6 +16,7 @@
 )]
 
 mod client;
+mod async_client;
 pub mod errors;
 pub mod util;
 

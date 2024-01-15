@@ -1,4 +1,5 @@
 use crate::account::Account;
+use crate::async_client::AsyncClient;
 use crate::client::Client;
 use crate::config::Config;
 use crate::futures::account::FuturesAccount;
@@ -264,7 +265,7 @@ impl Binance for FuturesGeneral {
         api_key: Option<String>, secret_key: Option<String>, config: &Config,
     ) -> FuturesGeneral {
         FuturesGeneral {
-            client: Client::new(
+            client: AsyncClient::new(
                 api_key,
                 secret_key,
                 config.futures_rest_api_endpoint.clone(),
