@@ -302,7 +302,7 @@ impl Binance for FuturesAccount {
         api_key: Option<String>, secret_key: Option<String>, config: &Config,
     ) -> Self {
         Self {
-            client: Client::new(
+            client: AsyncClient::new(
                 api_key,
                 secret_key,
                 config.futures_rest_api_endpoint.clone(),
