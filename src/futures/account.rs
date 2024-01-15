@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 use std::fmt::Display;
-use crate::util::build_signed_request;
+use crate::util::{build_signed_request, build_signed_request_async};
 use crate::errors::Result;
 use crate::client::Client;
 use crate::api::{API, Futures};
@@ -570,6 +570,14 @@ impl FuturesAccount {
         let request = build_signed_request(parameters, self.recv_window)?;
         self.client
             .get_signed(API::Futures(Futures::Account), Some(request))
+    }
+
+    pub async fn account_information_async(&self) -> anyhow::Result<AccountInformation> {
+        let parameters = BTreeMap::new();
+
+        let request = build_signed_request_async(parameters, self.recv_window)?;
+        self.client
+            .get_signed_async(API::Futures(Futures::Account), Some(request)).await
     }
 
     pub fn account_balance(&self) -> Result<Vec<AccountBalance>> {

@@ -20,6 +20,12 @@ pub fn build_signed_request(
     build_signed_request_custom(parameters, recv_window, SystemTime::now())
 }
 
+pub fn build_signed_request_async(
+    parameters: BTreeMap<String, String>, recv_window: u64,
+) -> anyhow::Result<String> {
+    build_signed_request_custom_async(parameters, recv_window, SystemTime::now())
+}
+
 pub fn build_signed_request_custom(
     mut parameters: BTreeMap<String, String>, recv_window: u64, start: SystemTime,
 ) -> Result<String> {
@@ -31,6 +37,19 @@ pub fn build_signed_request_custom(
         return Ok(build_request(parameters));
     }
     bail!("Failed to get timestamp")
+}
+
+pub fn build_signed_request_custom_async(
+    mut parameters: BTreeMap<String, String>, recv_window: u64, start: SystemTime,
+) -> anyhow::Result<String> {
+    if recv_window > 0 {
+        parameters.insert("recvWindow".into(), recv_window.to_string());
+    }
+    if let Ok(timestamp) = get_timestamp(start) {
+        parameters.insert("timestamp".into(), timestamp.to_string());
+        return Ok(build_request(parameters));
+    }
+    anyhow::bail!("Failed to get timestamp")
 }
 
 pub fn to_i64(v: &Value) -> i64 {

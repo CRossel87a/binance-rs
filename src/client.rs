@@ -15,6 +15,7 @@ pub struct Client {
     secret_key: String,
     host: String,
     inner_client: reqwest::blocking::Client,
+    async_client: reqwest::Client
 }
 
 impl Client {
@@ -27,6 +28,7 @@ impl Client {
                 .pool_idle_timeout(None)
                 .build()
                 .unwrap(),
+            async_client: reqwest::Client::new()
         }
     }
 
@@ -41,6 +43,19 @@ impl Client {
             .send()?;
 
         self.handler(response)
+    }
+
+    pub async fn get_signed_async<T: DeserializeOwned>(
+        &self, endpoint: API, request: Option<String>,
+    ) -> anyhow::Result<T> {
+        let url = self.sign_request(endpoint, request);
+        let client = &self.async_client;
+        let response = client
+            .get(url.as_str())
+            .headers(self.build_headers_async(true)?)
+            .send().await?;
+
+        self.handler_async(response).await
     }
 
     pub fn post_signed<T: DeserializeOwned>(&self, endpoint: API, request: String) -> Result<T> {
@@ -156,6 +171,24 @@ impl Client {
         Ok(custom_headers)
     }
 
+    fn build_headers_async(&self, content_type: bool) -> anyhow::Result<HeaderMap> {
+        let mut custom_headers = HeaderMap::new();
+
+        custom_headers.insert(USER_AGENT, HeaderValue::from_static("binance-rs"));
+        if content_type {
+            custom_headers.insert(
+                CONTENT_TYPE,
+                HeaderValue::from_static("application/x-www-form-urlencoded"),
+            );
+        }
+        custom_headers.insert(
+            HeaderName::from_static("x-mbx-apikey"),
+            HeaderValue::from_str(self.api_key.as_str())?,
+        );
+
+        Ok(custom_headers)
+    }
+
     fn handler<T: DeserializeOwned>(&self, response: Response) -> Result<T> {
         match response.status() {
             StatusCode::OK => Ok(response.json::<T>()?),
@@ -175,6 +208,33 @@ impl Client {
             }
             s => {
                 bail!(format!("Received response: {:?}", s));
+            }
+        }
+    }
+    async fn handler_async<T: DeserializeOwned>(&self, response: reqwest::Response) -> anyhow::Result<T> {
+        match response.status() {
+            StatusCode::OK => Ok(response.json::<T>().await?),
+            StatusCode::INTERNAL_SERVER_ERROR => {
+                anyhow::bail!("Internal Server Error");
+            }
+            StatusCode::SERVICE_UNAVAILABLE => {
+                anyhow::bail!("Service Unavailable");
+            }
+            StatusCode::UNAUTHORIZED => {
+                anyhow::bail!("Unauthorized");
+            }
+            StatusCode::BAD_REQUEST => {
+                //let error: BinanceContentError = response.json().await?;
+
+                let err = response.json().await?;
+
+                anyhow::bail!("binance error: {:?}",err);
+                //Err(anyhow::anyhow!(error))
+
+                //Err(ErrorKind::BinanceError(error).into())
+            }
+            s => {
+                anyhow::bail!(format!("Received response: {:?}", s));
             }
         }
     }
