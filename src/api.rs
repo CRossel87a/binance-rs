@@ -172,83 +172,84 @@ impl From<API> for String {
 }
 
 pub trait Binance {
-    fn new(api_key: Option<String>, secret_key: Option<String>) -> Self;
+    fn new(api_key: Option<String>, secret_key: Option<String>) -> anyhow::Result<Self> where Self: Sized;
+
     fn new_with_config(
-        api_key: Option<String>, secret_key: Option<String>, config: &Config,
-    ) -> Self;
+        api_key: Option<String>, secret_key: Option<String>, config: &Config,_proxy_op: Option<String>
+    ) -> anyhow::Result<Self> where Self: Sized;
 }
 
 impl Binance for General {
-    fn new(api_key: Option<String>, secret_key: Option<String>) -> General {
-        Self::new_with_config(api_key, secret_key, &Config::default())
+    fn new(api_key: Option<String>, secret_key: Option<String>) -> anyhow::Result<General> {
+        Self::new_with_config(api_key, secret_key, &Config::default(), None)
     }
 
     fn new_with_config(
-        api_key: Option<String>, secret_key: Option<String>, config: &Config,
-    ) -> General {
-        General {
+        api_key: Option<String>, secret_key: Option<String>, config: &Config,_proxy_op: Option<String>
+    ) -> anyhow::Result<General> {
+        Ok(General {
             client: Client::new(api_key, secret_key, config.rest_api_endpoint.clone()),
-        }
+        })
     }
 }
 
 impl Binance for Account {
-    fn new(api_key: Option<String>, secret_key: Option<String>) -> Account {
-        Self::new_with_config(api_key, secret_key, &Config::default())
+    fn new(api_key: Option<String>, secret_key: Option<String>) -> anyhow::Result<Account> {
+        Self::new_with_config(api_key, secret_key, &Config::default(), None)
     }
 
     fn new_with_config(
-        api_key: Option<String>, secret_key: Option<String>, config: &Config,
-    ) -> Account {
-        Account {
+        api_key: Option<String>, secret_key: Option<String>, config: &Config,_proxy_op: Option<String>
+    ) -> anyhow::Result<Account> {
+        Ok(Account {
             client: Client::new(api_key, secret_key, config.rest_api_endpoint.clone()),
             recv_window: config.recv_window,
-        }
+        })
     }
 }
 
 impl Binance for Savings {
-    fn new(api_key: Option<String>, secret_key: Option<String>) -> Self {
-        Self::new_with_config(api_key, secret_key, &Config::default())
+    fn new(api_key: Option<String>, secret_key: Option<String>) -> anyhow::Result<Self> {
+        Self::new_with_config(api_key, secret_key, &Config::default(), None)
     }
 
     fn new_with_config(
-        api_key: Option<String>, secret_key: Option<String>, config: &Config,
-    ) -> Self {
-        Self {
+        api_key: Option<String>, secret_key: Option<String>, config: &Config,_proxy_op: Option<String>
+    ) -> anyhow::Result<Self> {
+        Ok(Self {
             client: Client::new(api_key, secret_key, config.rest_api_endpoint.clone()),
             recv_window: config.recv_window,
-        }
+        })
     }
 }
 
 impl Binance for Market {
-    fn new(api_key: Option<String>, secret_key: Option<String>) -> Market {
-        Self::new_with_config(api_key, secret_key, &Config::default())
+    fn new(api_key: Option<String>, secret_key: Option<String>) -> anyhow::Result<Market> {
+        Self::new_with_config(api_key, secret_key, &Config::default(), None)
     }
 
     fn new_with_config(
-        api_key: Option<String>, secret_key: Option<String>, config: &Config,
-    ) -> Market {
-        Market {
+        api_key: Option<String>, secret_key: Option<String>, config: &Config,_proxy_op: Option<String>
+    ) -> anyhow::Result<Market> {
+        Ok(Market {
             client: Client::new(api_key, secret_key, config.rest_api_endpoint.clone()),
             recv_window: config.recv_window,
-        }
+        })
     }
 }
 
 impl Binance for UserStream {
-    fn new(api_key: Option<String>, secret_key: Option<String>) -> UserStream {
-        Self::new_with_config(api_key, secret_key, &Config::default())
+    fn new(api_key: Option<String>, secret_key: Option<String>) -> anyhow::Result<UserStream> {
+        Self::new_with_config(api_key, secret_key, &Config::default(), None)
     }
 
     fn new_with_config(
-        api_key: Option<String>, secret_key: Option<String>, config: &Config,
-    ) -> UserStream {
-        UserStream {
+        api_key: Option<String>, secret_key: Option<String>, config: &Config,_proxy_op: Option<String>
+    ) -> anyhow::Result<UserStream> {
+        Ok(UserStream {
             client: Client::new(api_key, secret_key, config.rest_api_endpoint.clone()),
             recv_window: config.recv_window,
-        }
+        })
     }
 }
 
@@ -257,76 +258,77 @@ impl Binance for UserStream {
 // *****************************************************
 
 impl Binance for FuturesGeneral {
-    fn new(api_key: Option<String>, secret_key: Option<String>) -> FuturesGeneral {
-        Self::new_with_config(api_key, secret_key, &Config::default())
+    fn new(api_key: Option<String>, secret_key: Option<String>) -> anyhow::Result<FuturesGeneral> {
+        Self::new_with_config(api_key, secret_key, &Config::default(), None)
     }
 
     fn new_with_config(
-        api_key: Option<String>, secret_key: Option<String>, config: &Config,
-    ) -> FuturesGeneral {
-        FuturesGeneral {
+        api_key: Option<String>, secret_key: Option<String>, config: &Config,_proxy_op: Option<String>
+    ) -> anyhow::Result<FuturesGeneral> {
+        Ok(FuturesGeneral {
             client: AsyncClient::new(
                 api_key,
                 secret_key,
                 config.futures_rest_api_endpoint.clone(),
-            ),
-        }
+                _proxy_op
+            )?,
+        })
     }
 }
 
 impl Binance for FuturesMarket {
-    fn new(api_key: Option<String>, secret_key: Option<String>) -> FuturesMarket {
-        Self::new_with_config(api_key, secret_key, &Config::default())
+    fn new(api_key: Option<String>, secret_key: Option<String>) -> anyhow::Result<FuturesMarket> {
+        Self::new_with_config(api_key, secret_key, &Config::default(),None)
     }
 
     fn new_with_config(
-        api_key: Option<String>, secret_key: Option<String>, config: &Config,
-    ) -> FuturesMarket {
-        FuturesMarket {
+        api_key: Option<String>, secret_key: Option<String>, config: &Config,_proxy_op: Option<String>
+    ) -> anyhow::Result<FuturesMarket> {
+        Ok(FuturesMarket {
             client: Client::new(
                 api_key,
                 secret_key,
                 config.futures_rest_api_endpoint.clone(),
             ),
             recv_window: config.recv_window,
-        }
+        })
     }
 }
 
 impl Binance for FuturesAccount {
-    fn new(api_key: Option<String>, secret_key: Option<String>) -> Self {
-        Self::new_with_config(api_key, secret_key, &Config::default())
+    fn new(api_key: Option<String>, secret_key: Option<String>) -> anyhow::Result<Self> {
+        Self::new_with_config(api_key, secret_key, &Config::default(),None)
     }
 
     fn new_with_config(
-        api_key: Option<String>, secret_key: Option<String>, config: &Config,
-    ) -> Self {
-        Self {
+        api_key: Option<String>, secret_key: Option<String>, config: &Config,_proxy_op: Option<String>
+    ) -> anyhow::Result<Self> {
+        Ok(Self {
             client: AsyncClient::new(
                 api_key,
                 secret_key,
-                config.futures_rest_api_endpoint.clone(),
-            ),
+                config.futures_rest_api_endpoint.clone(),_proxy_op
+            )?,
             recv_window: config.recv_window,
-        }
+        })
     }
 }
 
 impl Binance for FuturesUserStream {
-    fn new(api_key: Option<String>, secret_key: Option<String>) -> FuturesUserStream {
-        Self::new_with_config(api_key, secret_key, &Config::default())
+    fn new(api_key: Option<String>, secret_key: Option<String>) -> anyhow::Result<FuturesUserStream> {
+        Self::new_with_config(api_key, secret_key, &Config::default(), None)
     }
 
     fn new_with_config(
-        api_key: Option<String>, secret_key: Option<String>, config: &Config,
-    ) -> FuturesUserStream {
-        FuturesUserStream {
+        api_key: Option<String>, secret_key: Option<String>, config: &Config,_proxy_op: Option<String>
+    ) -> anyhow::Result<FuturesUserStream> {
+        Ok(FuturesUserStream {
             client: Client::new(
                 api_key,
                 secret_key,
                 config.futures_rest_api_endpoint.clone(),
             ),
             recv_window: config.recv_window,
-        }
+        })
     }
 }

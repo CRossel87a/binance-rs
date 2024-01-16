@@ -15,13 +15,22 @@ pub struct AsyncClient {
 }
 
 impl AsyncClient {
-    pub fn new(api_key: Option<String>, secret_key: Option<String>, host: String) -> Self {
-        AsyncClient {
+    pub fn new(api_key: Option<String>, secret_key: Option<String>, host: String, proxy_op: Option<String>) -> anyhow::Result<Self> {
+
+        let inner_client = match proxy_op {
+            Some(url) => {
+                let proxy = reqwest::Proxy::http(url)?;
+                reqwest::Client::builder().proxy(proxy).build()?
+            },
+            None => reqwest::Client::new()
+        };
+        
+        Ok(AsyncClient {
             api_key: api_key.unwrap_or_default(),
             secret_key: secret_key.unwrap_or_default(),
             host,
-            inner_client: reqwest::Client::new(),
-        }
+            inner_client,
+        })
     }
 
     pub async fn get_signed<T: DeserializeOwned>(
