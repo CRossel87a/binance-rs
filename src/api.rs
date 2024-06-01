@@ -282,14 +282,14 @@ impl Binance for FuturesMarket {
     }
 
     fn new_with_config(
-        api_key: Option<String>, secret_key: Option<String>, config: &Config,_proxy_op: Option<String>
+        api_key: Option<String>, secret_key: Option<String>, config: &Config,proxy_op: Option<String>
     ) -> anyhow::Result<FuturesMarket> {
         Ok(FuturesMarket {
-            client: Client::new(
+            client: AsyncClient::new(
                 api_key,
                 secret_key,
-                config.futures_rest_api_endpoint.clone(),
-            ),
+                config.futures_rest_api_endpoint.clone(),proxy_op
+            )?,
             recv_window: config.recv_window,
         })
     }
