@@ -1,3 +1,5 @@
+use std::time::{Duration, Instant};
+
 use anyhow::{bail, Result};
 
 use crate::async_client::AsyncClient;
@@ -13,9 +15,10 @@ pub struct FuturesGeneral {
 
 impl FuturesGeneral {
     // Test connectivity
-    pub async fn ping(&self) -> Result<String> {
+    pub async fn ping(&self) -> Result<Duration> {
+        let t0 = Instant::now();
         self.client.get::<Empty>(API::Futures(Futures::Ping), None).await?;
-        Ok("pong".into())
+        Ok(t0.elapsed())
     }
 
     // Check server time
