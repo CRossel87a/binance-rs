@@ -161,7 +161,13 @@ impl AsyncClient {
 
     async fn handler<T: DeserializeOwned>(&self, response: reqwest::Response) -> anyhow::Result<T> {
         match response.status() {
-            StatusCode::OK => Ok(response.json::<T>().await?),
+            StatusCode::OK => {
+
+                let text = response.text().await?;
+
+                serde_json::from_str::<T>(&text)
+                .map_err(|e| anyhow::anyhow!("Failed to deserialize response: {}. Full response: {}", e, text))
+            },
             StatusCode::INTERNAL_SERVER_ERROR => {
                 anyhow::bail!("Internal Server Error");
             }
@@ -174,15 +180,16 @@ impl AsyncClient {
             StatusCode::BAD_REQUEST => {
                 //let error: BinanceContentError = response.json().await?;
 
-                let err = response.json().await?;
+                let text = response.text().await?;
 
-                anyhow::bail!("binance error: {:?}",err);
+                anyhow::bail!("binance error: {:?}",text);
                 //Err(anyhow::anyhow!(error))
 
                 //Err(ErrorKind::BinanceError(error).into())
             }
             s => {
-                anyhow::bail!(format!("Received response: {:?}", s));
+                let text = response.text().await?;
+                anyhow::bail!(format!("Received response: {:?} text: {}", s, text));
             }
         }
     }

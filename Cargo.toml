@@ -1,6 +1,6 @@
 [package]
 name = "binance_api"
-version = "0.20.3"
+version = "0.20.4"
 license = "MIT OR Apache-2.0"
 authors = ["Flavio Oliveira <flavio@wisespace.io>"]
 edition = "2021"
