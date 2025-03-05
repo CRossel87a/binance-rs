@@ -229,10 +229,10 @@ impl Binance for Market {
     }
 
     fn new_with_config(
-        api_key: Option<String>, secret_key: Option<String>, config: &Config,_proxy_op: Option<String>
+        api_key: Option<String>, secret_key: Option<String>, config: &Config,proxy_op: Option<String>
     ) -> anyhow::Result<Market> {
         Ok(Market {
-            client: Client::new(api_key, secret_key, config.rest_api_endpoint.clone()),
+            client: AsyncClient::new(api_key, secret_key, config.rest_api_endpoint.clone(), proxy_op)?,
             recv_window: config.recv_window,
         })
     }
