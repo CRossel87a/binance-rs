@@ -125,12 +125,10 @@ pub enum Filters {
         min_trailing_below_delta: Option<u16>,
         max_trailing_below_delta: Option<u16>,
     },
-    // Add the missing filter type
-    #[serde(rename = "POSITION_RISK_CONTROL")]
+    // Catch-all for unknown filter types with their fields stored as a serde_json::Value
     #[serde(rename_all = "camelCase")]
-    PositionRiskControl {
-        position_control_side: String,
-    },
+    #[serde(untagged)]
+    Unknown(serde_json::Map<String, serde_json::Value>)
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
