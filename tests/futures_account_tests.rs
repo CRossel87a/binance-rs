@@ -1,17 +1,17 @@
-use binance::api::*;
-use binance::config::*;
-use binance::futures::account::*;
+use binance_api::api::*;
+use binance_api::config::*;
+use binance_api::futures::account::*;
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use mockito::{Server, Matcher};
     use float_cmp::*;
-    use binance::account::OrderSide;
-    use binance::futures::model::Transaction;
+    use binance_api::account::OrderSide;
+    use binance_api::futures::model::Transaction;
 
-    #[test]
-    fn change_initial_leverage() {
+    #[tokio::test]
+    async fn change_initial_leverage() {
         let mut server = Server::new();
         let mock_change_leverage = server.mock("POST", "/fapi/v1/leverage")
             .with_header("content-type", "application/json;charset=UTF-8")
@@ -24,9 +24,9 @@ mod tests {
         let config = Config::default()
             .set_futures_rest_api_endpoint(server.url())
             .set_recv_window(1234);
-        let account: FuturesAccount = Binance::new_with_config(None, None, &config);
+        let account: FuturesAccount = Binance::new_with_config(None, None, &config, None).unwrap();
         let _ = env_logger::try_init();
-        let response = account.change_initial_leverage("LTCUSDT", 2).unwrap();
+        let response = account.change_initial_leverage("LTCUSDT", 2).await.unwrap();
 
         mock_change_leverage.assert();
 
@@ -40,8 +40,8 @@ mod tests {
         ));
     }
 
-    #[test]
-    fn cancel_all_open_orders() {
+    #[tokio::test]
+    async fn cancel_all_open_orders() {
         let mut server = Server::new();
         let mock = server.mock("DELETE", "/fapi/v1/allOpenOrders")
             .with_header("content-type", "application/json;charset=UTF-8")
@@ -54,15 +54,15 @@ mod tests {
         let config = Config::default()
             .set_futures_rest_api_endpoint(server.url())
             .set_recv_window(1234);
-        let account: FuturesAccount = Binance::new_with_config(None, None, &config);
+        let account: FuturesAccount = Binance::new_with_config(None, None, &config, None).unwrap();
         let _ = env_logger::try_init();
-        account.cancel_all_open_orders("BTCUSDT").unwrap();
+        account.cancel_all_open_orders("BTCUSDT").await.unwrap();
 
         mock.assert();
     }
 
-    #[test]
-    fn change_position_mode() {
+    #[tokio::test]
+    async fn change_position_mode() {
         let mut server = Server::new();
         let mock = server.mock("POST", "/fapi/v1/positionSide/dual")
             .with_header("content-type", "application/json;charset=UTF-8")
@@ -75,15 +75,15 @@ mod tests {
         let config = Config::default()
             .set_futures_rest_api_endpoint(server.url())
             .set_recv_window(1234);
-        let account: FuturesAccount = Binance::new_with_config(None, None, &config);
+        let account: FuturesAccount = Binance::new_with_config(None, None, &config, None).unwrap();
         let _ = env_logger::try_init();
-        account.change_position_mode(true).unwrap();
+        account.change_position_mode(true).await.unwrap();
 
         mock.assert();
     }
 
-    #[test]
-    fn stop_market_close_buy() {
+    #[tokio::test]
+    async fn stop_market_close_buy() {
         let mut server = Server::new();
         let mock_stop_market_close_sell = server.mock("POST", "/fapi/v1/order")
             .with_header("content-type", "application/json;charset=UTF-8")
@@ -94,9 +94,9 @@ mod tests {
         let config = Config::default()
             .set_futures_rest_api_endpoint(server.url())
             .set_recv_window(1234);
-        let account: FuturesAccount = Binance::new_with_config(None, None, &config);
+        let account: FuturesAccount = Binance::new_with_config(None, None, &config, None).unwrap();
         let _ = env_logger::try_init();
-        let transaction: Transaction = account.stop_market_close_buy("SRMUSDT", 10.5).unwrap();
+        let transaction: Transaction = account.stop_market_close_buy("SRMUSDT", 10.5).await.unwrap();
 
         mock_stop_market_close_sell.assert();
 
@@ -107,8 +107,8 @@ mod tests {
         assert!(approx_eq!(f64, transaction.stop_price, 10.5, ulps = 2));
     }
 
-    #[test]
-    fn stop_market_close_sell() {
+    #[tokio::test]
+    async fn stop_market_close_sell() {
         let mut server = Server::new();
         let mock_stop_market_close_sell = server.mock("POST", "/fapi/v1/order")
             .with_header("content-type", "application/json;charset=UTF-8")
@@ -119,9 +119,9 @@ mod tests {
         let config = Config::default()
             .set_futures_rest_api_endpoint(server.url())
             .set_recv_window(1234);
-        let account: FuturesAccount = Binance::new_with_config(None, None, &config);
+        let account: FuturesAccount = Binance::new_with_config(None, None, &config, None).unwrap();
         let _ = env_logger::try_init();
-        let transaction: Transaction = account.stop_market_close_sell("SRMUSDT", 7.4).unwrap();
+        let transaction: Transaction = account.stop_market_close_sell("SRMUSDT", 7.4).await.unwrap();
 
         mock_stop_market_close_sell.assert();
 
@@ -132,8 +132,8 @@ mod tests {
         assert!(approx_eq!(f64, transaction.stop_price, 7.4, ulps = 2));
     }
 
-    #[test]
-    fn custom_order() {
+    #[tokio::test]
+    async fn custom_order() {
         let mut server = Server::new();
         let mock_custom_order = server.mock("POST", "/fapi/v1/order")
             .with_header("content-type", "application/json;charset=UTF-8")
@@ -144,7 +144,7 @@ mod tests {
         let config = Config::default()
             .set_futures_rest_api_endpoint(server.url())
             .set_recv_window(1234);
-        let account: FuturesAccount = Binance::new_with_config(None, None, &config);
+        let account: FuturesAccount = Binance::new_with_config(None, None, &config, None).unwrap();
         let _ = env_logger::try_init();
         let custom_order = CustomOrderRequest {
             symbol: "SRMUSDT".into(),
@@ -162,7 +162,7 @@ mod tests {
             working_type: None,
             price_protect: None,
         };
-        let transaction: Transaction = account.custom_order(custom_order).unwrap();
+        let transaction: Transaction = account.custom_order(custom_order).await.unwrap();
 
         mock_custom_order.assert();
 
@@ -173,8 +173,8 @@ mod tests {
         assert!(approx_eq!(f64, transaction.stop_price, 7.4, ulps = 2));
     }
 
-    #[test]
-    fn get_income() {
+    #[tokio::test]
+    async fn get_income() {
         let mut server = Server::new();
         let mock = server.mock("GET", "/fapi/v1/income")
             .with_header("content-type", "application/json;charset=UTF-8")
@@ -189,7 +189,7 @@ mod tests {
         let config = Config::default()
             .set_futures_rest_api_endpoint(server.url())
             .set_recv_window(1234);
-        let account: FuturesAccount = Binance::new_with_config(None, None, &config);
+        let account: FuturesAccount = Binance::new_with_config(None, None, &config, None).unwrap();
         let _ = env_logger::try_init();
         let income_request = IncomeRequest {
             symbol: Some("BTCUSDT".into()),
@@ -198,7 +198,7 @@ mod tests {
             end_time: Some(12345678910),
             limit: Some(10),
         };
-        account.get_income(income_request).unwrap();
+        account.get_income(income_request).await.unwrap();
 
         mock.assert();
     }

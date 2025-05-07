@@ -1,11 +1,11 @@
-use binance::api::*;
-use binance::savings::*;
-use binance::config::*;
-use binance::general::*;
-use binance::account::*;
-use binance::market::*;
-use binance::model::KlineSummary;
-use binance::errors::ErrorKind as BinanceLibErrorKind;
+use binance_api::api::*;
+use binance_api::savings::*;
+use binance_api::config::*;
+use binance_api::general::*;
+use binance_api::account::*;
+use binance_api::market::*;
+use binance_api::model::KlineSummary;
+use binance_api::errors::ErrorKind as BinanceLibErrorKind;
 
 fn main() {
     // The general spot API endpoints; shown with

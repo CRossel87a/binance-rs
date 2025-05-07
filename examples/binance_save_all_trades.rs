@@ -3,8 +3,8 @@ use std::fs::File;
 use csv::Writer;
 use std::sync::atomic::{AtomicBool};
 
-use binance::websockets::*;
-use binance::model::{DayTickerEvent};
+use binance_api::websockets::*;
+use binance_api::model::{DayTickerEvent};
 
 fn main() {
     save_all_trades_websocket();

@@ -1,8 +1,8 @@
-use binance::api::*;
-use binance::futures::general::*;
-use binance::futures::market::*;
-use binance::futures::model::*;
-use binance::errors::ErrorKind as BinanceLibErrorKind;
+use binance_api::api::*;
+use binance_api::futures::general::*;
+use binance_api::futures::market::*;
+use binance_api::futures::model::*;
+use binance_api::errors::ErrorKind as BinanceLibErrorKind;
 
 fn main() {
     general();

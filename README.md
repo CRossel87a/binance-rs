@@ -49,9 +49,9 @@ rustup install stable
 ### MARKET DATA
 
 ```rust
-use binance::api::*;
-use binance::model::*;
-use binance::market::*;
+use binance_api::api::*;
+use binance_api::model::*;
+use binance_api::market::*;
 
 fn main() {
     let market: Market = Binance::new(None, None);
@@ -131,8 +131,8 @@ fn main() {
 ### ACCOUNT DATA
 
 ```rust
-use binance::api::*;
-use binance::account::*;
+use binance_api::api::*;
+use binance_api::account::*;
 
 fn main() {
     let api_key = Some("YOUR_API_KEY".into());
@@ -210,7 +210,7 @@ Provides more detailed error information
 You can check out the [Binance Error Codes](https://github.com/binance-exchange/binance-official-api-docs/blob/master/errors.md)
 
 ```rust
-use binance::errors::ErrorKind as BinanceLibErrorKind;
+use binance_api::errors::ErrorKind as BinanceLibErrorKind;
 
 [...]
 
@@ -254,8 +254,8 @@ let general: General = if use_testnet {
 ### USER STREAM CONFIGURATION
 
 ```rust
-use binance::api::*;
-use binance::userstream::*;
+use binance_api::api::*;
+use binance_api::userstream::*;
 
 fn main() {
     let api_key_user = Some("YOUR_API_KEY".into());
@@ -283,9 +283,9 @@ fn main() {
 #### USER STREAM
 
 ```rust
-use binance::api::*;
-use binance::userstream::*;
-use binance::websockets::*;
+use binance_api::api::*;
+use binance_api::userstream::*;
+use binance_api::websockets::*;
 use std::sync::atomic::{AtomicBool};
 
 fn main() {
@@ -328,7 +328,7 @@ fn main() {
 #### TRADES
 
 ```rust
-use binance::websockets::*;
+use binance_api::websockets::*;
 use std::sync::atomic::{AtomicBool};
 
 fn main() {
@@ -366,7 +366,7 @@ fn main() {
 #### KLINE
 
 ```rust
-use binance::websockets::*;
+use binance_api::websockets::*;
 use std::sync::atomic::{AtomicBool};
 
 fn main() {
@@ -398,7 +398,7 @@ fn main() {
 #### MULTIPLE STREAMS
 
 ```rust
-use binance::websockets::*;
+use binance_api::websockets::*;
 use std::sync::atomic::{AtomicBool};
 
 fn main() {

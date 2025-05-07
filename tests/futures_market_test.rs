@@ -1,15 +1,15 @@
-use binance::api::*;
-use binance::config::*;
-use binance::futures::market::FuturesMarket;
-use binance::futures::model::OpenInterestHist;
+use binance_api::api::*;
+use binance_api::config::*;
+use binance_api::futures::market::FuturesMarket;
+use binance_api::futures::model::OpenInterestHist;
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use mockito::{Server, Matcher};
 
-    #[test]
-    fn open_interest_statistics() {
+    #[tokio::test]
+    async fn open_interest_statistics() {
         let mut server = Server::new();
         let mock_open_interest_statistics = server.mock("GET", "/futures/data/openInterestHist")
             .with_header("content-type", "application/json;charset=UTF-8")
@@ -18,10 +18,11 @@ mod tests {
             .create();
 
         let config = Config::default().set_futures_rest_api_endpoint(server.url());
-        let market: FuturesMarket = Binance::new_with_config(None, None, &config);
+        let market: FuturesMarket = Binance::new_with_config(None, None, &config, None).unwrap();
 
         let open_interest_hists = market
             .open_interest_statistics("BTCUSDT", "5m", 10, None, None)
+            .await
             .unwrap();
         mock_open_interest_statistics.assert();
 

@@ -1,7 +1,7 @@
-use binance::api::*;
-use binance::config::*;
-use binance::general::*;
-use binance::model::*;
+use binance_api::api::*;
+use binance_api::config::*;
+use binance_api::general::*;
+use binance_api::model::*;
 
 #[cfg(test)]
 mod tests {
@@ -18,7 +18,7 @@ mod tests {
             .create();
 
         let config = Config::default().set_rest_api_endpoint(server.url());
-        let general: General = Binance::new_with_config(None, None, &config);
+        let general: General = Binance::new_with_config(None, None, &config, None).unwrap();
 
         let pong = general.ping().unwrap();
         mock_ping.assert();
@@ -35,7 +35,7 @@ mod tests {
             .create();
 
         let config = Config::default().set_rest_api_endpoint(server.url());
-        let general: General = Binance::new_with_config(None, None, &config);
+        let general: General = Binance::new_with_config(None, None, &config, None).unwrap();
 
         let server_time = general.get_server_time().unwrap();
         mock_server_time.assert();
@@ -52,7 +52,7 @@ mod tests {
             .create();
 
         let config = Config::default().set_rest_api_endpoint(server.url());
-        let general: General = Binance::new_with_config(None, None, &config);
+        let general: General = Binance::new_with_config(None, None, &config, None).unwrap();
 
         let exchange_info = general.exchange_info().unwrap();
         mock_exchange_info.assert();
@@ -69,7 +69,7 @@ mod tests {
             .create();
 
         let config = Config::default().set_rest_api_endpoint(server.url());
-        let general: General = Binance::new_with_config(None, None, &config);
+        let general: General = Binance::new_with_config(None, None, &config, None).unwrap();
 
         let symbol = general.get_symbol_info("BNBBTC").unwrap();
         mock_exchange_info.assert();

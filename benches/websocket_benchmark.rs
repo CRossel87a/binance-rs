@@ -1,6 +1,6 @@
 use criterion::{criterion_group, criterion_main, Criterion};
 
-use binance::websockets::*;
+use binance_api::websockets::*;
 
 use core::time::Duration;
 
