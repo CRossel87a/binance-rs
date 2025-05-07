@@ -14,6 +14,7 @@
     clippy::implicit_clone,
     clippy::semicolon_if_nothing_returned
 )]
+#[allow(unexpected_cfgs)]
 
 mod client;
 mod async_client;

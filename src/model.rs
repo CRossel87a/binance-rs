@@ -1385,6 +1385,7 @@ pub(crate) mod string_or_float_opt {
         }
     }
 
+    #[allow(dead_code)]
     pub fn deserialize<'de, D>(deserializer: D) -> Result<Option<f64>, D::Error>
     where
         D: Deserializer<'de>,

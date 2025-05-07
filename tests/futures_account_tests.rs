@@ -123,6 +123,8 @@ mod tests {
         let _ = env_logger::try_init();
         let transaction: Transaction = account.stop_market_close_sell("SRMUSDT", 7.4).await.unwrap();
 
+        dbg!(&transaction);
+
         mock_stop_market_close_sell.assert();
 
         assert_eq!(transaction.symbol, "SRMUSDT");

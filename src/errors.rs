@@ -7,7 +7,9 @@ pub struct BinanceContentError {
     pub msg: String,
 }
 
+
 error_chain! {
+    
     errors {
         BinanceError(response: BinanceContentError)
 
