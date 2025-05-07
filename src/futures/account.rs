@@ -508,7 +508,7 @@ impl FuturesAccount {
         parameters.insert("symbol".into(), order.symbol);
         parameters.insert("side".into(), order.side.to_string());
         parameters.insert("type".into(), order.order_type.to_string());
-        parameters.insert("selfTradePreventionMode", "EXPIRE_TAKER".into());
+        parameters.insert("selfTradePreventionMode".into(), "EXPIRE_TAKER".into());
 
         if let Some(position_side) = order.position_side {
             parameters.insert("positionSide".into(), position_side.to_string());
