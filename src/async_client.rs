@@ -20,9 +20,9 @@ impl AsyncClient {
         let inner_client = match proxy_op {
             Some(url) => {
                 let proxy = reqwest::Proxy::all(url)?;
-                reqwest::Client::builder().proxy(proxy).build()?
+                reqwest::Client::builder().tcp_nodelay(true).proxy(proxy).build()?
             },
-            None => reqwest::Client::new()
+            None => reqwest::Client::builder().tcp_nodelay(true).build()?
         };
         
         Ok(AsyncClient {
