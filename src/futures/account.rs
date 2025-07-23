@@ -476,6 +476,24 @@ impl FuturesAccount {
             .get_signed(API::Futures(Futures::AllOrders), Some(request)).await
     }
 
+    pub async fn get_order<S, F>(
+        &self, symbol: S, order_id: F
+    ) -> Result<Order>
+    where
+        S: Into<String>,
+        F: Into<Option<u64>>,
+    {
+        let mut parameters = BTreeMap::new();
+        parameters.insert("symbol".into(), symbol.into());
+        if let Some(order_id) = order_id.into() {
+            parameters.insert("orderId".into(), order_id.to_string());
+        }
+       
+        let request = build_signed_request_async(parameters, self.recv_window)?;
+        self.client
+            .get_signed(API::Futures(Futures::Order), Some(request)).await
+    }
+
     pub async fn get_user_trades<S, F, N>(
         &self, symbol: S, from_id: F, start_time: F, end_time: F, limit: N,
     ) -> Result<Vec<TradeHistory>>

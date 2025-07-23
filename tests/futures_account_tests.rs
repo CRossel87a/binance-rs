@@ -204,4 +204,29 @@ mod tests {
 
         mock.assert();
     }
+
+    use std::env;
+    use anyhow::anyhow;
+
+    fn unlock_binance() -> anyhow::Result<(String, String)> {
+        let key: String =
+            env::var("BinanceTradingKey").map_err(|_| anyhow!("can't find BinanceTradingKey"))?;
+        let secret: String =
+            env::var("BinanceTradingSecret").map_err(|_| anyhow!("can't find BinanceTradingSecret"))?;
+        Ok((key, secret))
+    }
+
+    #[tokio::test]
+    async fn get_order() {
+        let (key, secret) = unlock_binance().unwrap();
+
+        let config = Config::default();
+        let account: FuturesAccount = Binance::new_with_config(Some(key), Some(secret), &config, None).unwrap();
+
+        let order_id = 1049904281;
+
+        let order = account.get_order("SCRUSDT", order_id).await.unwrap();
+        dbg!(order);
+    }
+
 }
