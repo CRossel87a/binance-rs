@@ -223,10 +223,20 @@ mod tests {
         let config = Config::default();
         let account: FuturesAccount = Binance::new_with_config(Some(key), Some(secret), &config, None).unwrap();
 
-        let order_id = 1049904281;
+        let order_id = 2206081755;
 
-        let order = account.get_order("SCRUSDT", order_id).await.unwrap();
+        let order = account.get_order("SUSDT", order_id).await.unwrap();
         dbg!(order);
+    }
+
+    #[test]
+    fn deserialize_new_order_without_cumquote() {
+        // A resting NEW order response omits `cumQuote` and `avgPrice`; both must default to 0.0.
+        let raw = r#"{"orderId":2206081755,"symbol":"SUSDT","status":"NEW","clientOrderId":"5iy8vYikLV19cdutrcR2dl","price":"0.0208500","origQty":"3498","executedQty":"0","cumQty":"0","timeInForce":"GTC","type":"LIMIT","reduceOnly":false,"closePosition":false,"side":"BUY","positionSide":"BOTH","stopPrice":"0.0000000","workingType":"CONTRACT_PRICE","priceProtect":false,"origType":"LIMIT","priceMatch":"NONE","selfTradePreventionMode":"EXPIRE_TAKER","goodTillDate":0,"updateTime":1782371013525}"#;
+        let tx: Transaction = serde_json::from_str(raw).unwrap();
+        assert_eq!(tx.cum_quote, 0.0);
+        assert_eq!(tx.avg_price, 0.0);
+        assert_eq!(tx.status, "NEW");
     }
 
 }

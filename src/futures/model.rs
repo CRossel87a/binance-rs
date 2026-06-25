@@ -212,7 +212,7 @@ pub struct Order {
     pub client_order_id: String,
     #[serde(with = "string_or_float", default = "default_stop_price")]
     pub cum_qty: f64,
-    #[serde(with = "string_or_float")]
+    #[serde(with = "string_or_float", default = "default_zero")]
     pub cum_quote: f64,
     #[serde(with = "string_or_float")]
     pub executed_qty: f64,
@@ -250,12 +250,12 @@ pub struct Transaction {
     pub client_order_id: String,
     #[serde(with = "string_or_float")]
     pub cum_qty: f64,
-    #[serde(with = "string_or_float")]
+    #[serde(with = "string_or_float", default = "default_zero")]
     pub cum_quote: f64,
     #[serde(with = "string_or_float")]
     pub executed_qty: f64,
     pub order_id: u64,
-    #[serde(with = "string_or_float")]
+    #[serde(with = "string_or_float", default = "default_zero")]
     pub avg_price: f64,
     #[serde(with = "string_or_float")]
     pub orig_qty: f64,
@@ -288,7 +288,7 @@ pub struct CanceledOrder {
     pub client_order_id: String,
     #[serde(with = "string_or_float")]
     pub cum_qty: f64,
-    #[serde(with = "string_or_float")]
+    #[serde(with = "string_or_float", default = "default_zero")]
     pub cum_quote: f64,
     #[serde(with = "string_or_float")]
     pub executed_qty: f64,
@@ -483,6 +483,9 @@ pub struct ChangeLeverageResponse {
     pub symbol: String,
 }
 
+fn default_zero() -> f64 {
+    0.0
+}
 fn default_stop_price() -> f64 {
     0.0
 }
