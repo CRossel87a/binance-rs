@@ -615,6 +615,61 @@ pub struct OrderTradeEvent {
     pub order: OrderUpdate,
 }
 
+/// Response of the Algo Order API (POST/DELETE /fapi/v1/algoOrder).
+/// Numeric fields arrive as strings and may be empty (e.g. activatePrice),
+/// so they are kept as strings; only algo_id is required.
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct AlgoOrder {
+    pub algo_id: u64,
+    #[serde(default)]
+    pub client_algo_id: String,
+    #[serde(default)]
+    pub algo_type: String,
+    #[serde(default)]
+    pub order_type: String,
+    #[serde(default)]
+    pub symbol: String,
+    #[serde(default)]
+    pub side: String,
+    #[serde(default)]
+    pub position_side: String,
+    #[serde(default)]
+    pub time_in_force: String,
+    #[serde(default)]
+    pub quantity: String,
+    #[serde(default)]
+    pub algo_status: String,
+    #[serde(default)]
+    pub trigger_price: String,
+    #[serde(default)]
+    pub price: String,
+    #[serde(default)]
+    pub self_trade_prevention_mode: String,
+    #[serde(default)]
+    pub working_type: String,
+    #[serde(default)]
+    pub price_match: String,
+    #[serde(default)]
+    pub close_position: bool,
+    #[serde(default)]
+    pub price_protect: bool,
+    #[serde(default)]
+    pub reduce_only: bool,
+    #[serde(default)]
+    pub activate_price: String,
+    #[serde(default)]
+    pub callback_rate: String,
+    #[serde(default)]
+    pub create_time: u64,
+    #[serde(default)]
+    pub update_time: u64,
+    #[serde(default)]
+    pub trigger_time: u64,
+    #[serde(default)]
+    pub good_till_date: u64,
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Income {

@@ -10,7 +10,7 @@ use crate::futures::model::{Order, TradeHistory};
 
 use super::model::{
     ChangeLeverageResponse, Transaction, CanceledOrder, PositionRisk, AccountBalance,
-    AccountInformation,
+    AccountInformation, AlgoOrder,
 };
 
 #[derive(Clone)]
@@ -144,6 +144,29 @@ pub struct CustomOrderRequest {
     pub callback_rate: Option<f64>,
     pub working_type: Option<WorkingType>,
     pub price_protect: Option<f64>,
+}
+
+/// Request for the Algo Order API (POST /fapi/v1/algoOrder). Since 2025-12-09
+/// conditional order types (STOP, STOP_MARKET, TAKE_PROFIT, TAKE_PROFIT_MARKET,
+/// TRAILING_STOP_MARKET) are rejected by /fapi/v1/order with -4120 and must be
+/// placed through this endpoint instead. Note: the trigger is `triggerPrice`
+/// here, not `stopPrice`, and trailing activation is `activatePrice`.
+pub struct AlgoOrderRequest {
+    pub symbol: String,
+    pub side: OrderSide,
+    pub position_side: Option<PositionSide>,
+    pub order_type: OrderType,
+    pub time_in_force: Option<TimeInForce>,
+    pub qty: Option<f64>,
+    pub reduce_only: Option<bool>,
+    pub price: Option<f64>,
+    pub trigger_price: Option<f64>,
+    pub close_position: Option<bool>,
+    pub activation_price: Option<f64>,
+    pub callback_rate: Option<f64>,
+    pub working_type: Option<WorkingType>,
+    pub price_protect: Option<bool>,
+    pub client_algo_id: Option<String>,
 }
 
 pub struct IncomeRequest {
@@ -418,6 +441,74 @@ impl FuturesAccount {
         let request = build_signed_request_async(order, self.recv_window)?;
         self.client
             .post_signed(API::Futures(Futures::Order), request).await
+    }
+
+    // Conditional order via the Algo Order API (see AlgoOrderRequest)
+    pub async fn custom_algo_order(&self, order: AlgoOrderRequest) -> Result<AlgoOrder> {
+        let mut parameters: BTreeMap<String, String> = BTreeMap::new();
+        parameters.insert("algoType".into(), "CONDITIONAL".into());
+        parameters.insert("symbol".into(), order.symbol);
+        parameters.insert("side".into(), order.side.to_string());
+        parameters.insert("type".into(), order.order_type.to_string());
+        parameters.insert("selfTradePreventionMode".into(), "EXPIRE_TAKER".into());
+
+        if let Some(position_side) = order.position_side {
+            parameters.insert("positionSide".into(), position_side.to_string());
+        }
+        if let Some(time_in_force) = order.time_in_force {
+            parameters.insert("timeInForce".into(), time_in_force.to_string());
+        }
+        if let Some(qty) = order.qty {
+            parameters.insert("quantity".into(), qty.to_string());
+        }
+        if let Some(reduce_only) = order.reduce_only {
+            parameters.insert("reduceOnly".into(), reduce_only.to_string().to_uppercase());
+        }
+        if let Some(price) = order.price {
+            parameters.insert("price".into(), price.to_string());
+        }
+        if let Some(trigger_price) = order.trigger_price {
+            parameters.insert("triggerPrice".into(), trigger_price.to_string());
+        }
+        if let Some(close_position) = order.close_position {
+            parameters.insert(
+                "closePosition".into(),
+                close_position.to_string().to_uppercase(),
+            );
+        }
+        if let Some(activation_price) = order.activation_price {
+            parameters.insert("activatePrice".into(), activation_price.to_string());
+        }
+        if let Some(callback_rate) = order.callback_rate {
+            parameters.insert("callbackRate".into(), callback_rate.to_string());
+        }
+        if let Some(working_type) = order.working_type {
+            parameters.insert("workingType".into(), working_type.to_string());
+        }
+        if let Some(price_protect) = order.price_protect {
+            parameters.insert(
+                "priceProtect".into(),
+                price_protect.to_string().to_uppercase(),
+            );
+        }
+        if let Some(client_algo_id) = order.client_algo_id {
+            parameters.insert("clientAlgoId".into(), client_algo_id);
+        }
+
+        let request = build_signed_request_async(parameters, self.recv_window)?;
+        self.client
+            .post_signed(API::Futures(Futures::AlgoOrder), request).await
+    }
+
+    // Cancel a resting algo order. Algo orders are NOT cancelled by
+    // cancel_all_open_orders (/fapi/v1/allOpenOrders)
+    pub async fn cancel_algo_order(&self, algo_id: u64) -> Result<AlgoOrder> {
+        let mut parameters: BTreeMap<String, String> = BTreeMap::new();
+        parameters.insert("algoId".into(), algo_id.to_string());
+
+        let request = build_signed_request_async(parameters, self.recv_window)?;
+        self.client
+            .delete_signed(API::Futures(Futures::AlgoOrder), Some(request)).await
     }
 
     // Custom order for for professional traders
